@@ -1,5 +1,7 @@
 package it.objectmethod.ccelogin.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.objectmethod.ccelogin.controllers.beans.LoggedUsers;
 import it.objectmethod.ccelogin.dto.UtenteDTO;
 import it.objectmethod.ccelogin.service.UtenteService;
 
@@ -15,6 +18,9 @@ public class LoginController {
 
 	@Autowired
 	private UtenteService utenteService;
+
+	@Autowired
+	private LoggedUsers loggedUsers;
 
 	@RequestMapping("/login")
 	public ResponseEntity<Long> login(@RequestParam("username") String username,
@@ -29,12 +35,12 @@ public class LoginController {
 		return resp;
 	}
 
-	@RequestMapping("/findByEmail")
-	public ResponseEntity<UtenteDTO> findUtenteByEmail(@RequestParam("email") String email) {
-		ResponseEntity<UtenteDTO> resp = null;
+	@RequestMapping("/findAll")
+	public ResponseEntity<List<UtenteDTO>> findAllUtenti() {
+		ResponseEntity<List<UtenteDTO>> resp = null;
 		try {
-			UtenteDTO utente = utenteService.findUtenteByEmail(email);
-			resp = new ResponseEntity<>(utente, HttpStatus.OK);
+			List<UtenteDTO> utentiList = utenteService.findAllUtenti();
+			resp = new ResponseEntity<>(utentiList, HttpStatus.OK);
 		} catch (Exception e) {
 			resp = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
@@ -42,17 +48,10 @@ public class LoginController {
 	}
 
 	@RequestMapping("/role")
-	public ResponseEntity<String> agent(@RequestParam("email") String email,
-			@RequestParam("password") String password) {
+	public ResponseEntity<String> getRole(@RequestParam("token") String token) {
 		ResponseEntity<String> resp = null;
 		try {
-			UtenteDTO utente = utenteService.findUtenteByEmailAndPassword(email, password);
-			String role = utente.getRole();
-			if (role.equalsIgnoreCase("admin")) {
-				role = "Sei un admin e hai accesso a tutte le funzionalità";
-			} else {
-				role = "Sei un agente e hai accesso ad alcune funzionalità";
-			}
+			String role = utenteService.findUtenteRole(token);
 			resp = new ResponseEntity<>(role, HttpStatus.OK);
 		} catch (Exception e) {
 			resp = new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -1,5 +1,7 @@
 package it.objectmethod.ccelogin.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +33,20 @@ public class UtenteService {
 		return token;
 	}
 
-	public UtenteDTO findUtenteByEmail(String email) {
-		UtenteDTO utente = new UtenteDTO();
-		utente = utenteMapper.toDto(utenteRepo.findByEmail(email));
-		return utente;
+	public List<UtenteDTO> findAllUtenti() {
+		List<UtenteDTO> utentiList = new ArrayList<>();
+		utentiList = utenteMapper.toDto(utenteRepo.findAll());
+		return utentiList;
 	}
 
-	public UtenteDTO findUtenteByEmailAndPassword(String email, String password) {
-		UtenteDTO utente = new UtenteDTO();
-		utente = utenteMapper.toDto(utenteRepo.findByEmailAndPassword(email, password));
-		return utente;
+	public String findUtenteRole(String token) {
+		Long tokenNum = Long.parseLong(token);
+		String role = loggedUsers.getLoggerUserMap().get(tokenNum).getRole();
+		if (role.equalsIgnoreCase("admin")) {
+			role = "Sei un admin e hai accesso a tutte le funzionalità";
+		} else {
+			role = "Sei un agente e hai accesso ad alcune funzionalità";
+		}
+		return role;
 	}
 }
