@@ -16,7 +16,6 @@ public class LoggedUsers {
 		if (this.loggerUserMap == null) {
 			this.loggerUserMap = new HashMap<Long, UtenteDTO>();
 		}
-		System.out.println(loggerUserMap);
 		return loggerUserMap;
 	}
 }

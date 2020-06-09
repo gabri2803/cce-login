@@ -30,10 +30,8 @@ public class AuthenticationFilter implements Filter {
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 		HttpServletResponse httpResp = (HttpServletResponse) response;
 		String url = httpReq.getRequestURI();
-		System.out.println(url);
 
 		if (url.endsWith("login")) {
-			System.out.println("APPROVED");
 			chain.doFilter(request, response);
 		} else {
 			String token = httpReq.getHeader("auth-token");
